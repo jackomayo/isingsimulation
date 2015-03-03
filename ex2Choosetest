@@ -1,0 +1,18 @@
+#include "IsingSystem.h"
+#include<stdlib.h>
+#include<stdio.h>
+
+int main (void)
+{
+ IsingSystem MyParticles;
+ int i;
+ 
+ for(i=0;i<4;i++){
+ MyParticles.choose();
+ }  
+ 
+ //remember to uncomment lines in IsingSystem constructor.
+ 
+ system ("pause");   
+ return 0;    
+}
