@@ -4,13 +4,13 @@
 #include <iostream>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
-#define ISINGSIZE 16
+#define ISINGSIZE 8
 
 
 int main (void)
 {
  IsingSystem MyArray;//Initialises 2D ising array
- 
+// printf("are we cooking?");
 //output file
  FILE *results;
  results=fopen("Simulation_Results_32x32","w");
@@ -35,13 +35,13 @@ and DataCounter counts the number of data points collected per simulation*/
  
  double Merr,Cverr;//Initialises magnetic specific heat error
  
- printf("Generating Data; Please wait...\n\n\n");
+ printf("Cooking data; Please wait...\n\n\n");
  
  
-/*Loops Monte Carlo simulation for required number of temperatures*/
+//Loops Monte Carlo simulation for required number of temperatures
 for(T=0.5;T<6;T+=0.02){
- 
-/*(Re)sets specific heat counter variables*/                        
+ printf("t= %lf \n ", T);
+//(Re)sets specific heat counter variables
   CvSum=0;                     
   Cv2Sum=0;
                        

@@ -7,7 +7,7 @@
 #ifndef ISINGSYSTEM_H_
 #define ISINGSYSTEM_H_
 #include "Isingparticle.h"
-#define ISINGSIZE 16 // size of the array
+#define ISINGSIZE 8 // size of the array
 class IsingSystem{
  private:
   IsingParticle particles[ISINGSIZE][ISINGSIZE];//Initialises an array of ising particles (all of spin +1) of a give size

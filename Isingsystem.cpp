@@ -12,7 +12,7 @@
 #include<cmath>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
-#define ISINGSIZE 16
+#define ISINGSIZE 8
 
 // sets randomly selected particle to 0,0
 IsingSystem::IsingSystem(){
