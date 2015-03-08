@@ -4,7 +4,7 @@
 #include<iostream>
 
 
-in (void)
+int main(void)
 {
  IsingParticle MyParticle;
  cout<< "the initial spin is: " << MyParticle.spinValue())<< endl;
