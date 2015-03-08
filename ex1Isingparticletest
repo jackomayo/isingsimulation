@@ -2,14 +2,14 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<iostream>
-
+using namespace std;
 
 int main(void)
 {
  IsingParticle MyParticle;
- cout<< "the initial spin is: " << MyParticle.spinValue())<< endl;
+ cout<< "the initial spin is: " << MyParticle.spinValue()<< endl;
  MyParticle.flipspin();
-  cout<< "the flipped spin is: " << MyParticle.spinValue())<< endl; 
+  cout<< "the flipped spin is: " << MyParticle.spinValue()<< endl; 
     
     
  system ("pause");   

@@ -12,10 +12,14 @@
 #include<cmath>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
-#define ISINGSIZE 16
+#define ISINGSIZE 8
 
 // sets randomly selected particle to 0,0
 IsingSystem::IsingSystem(){
+	up_row=0;
+	down_row=0;
+	right_column=0;
+	left_column=0;
   current_column=0;
   current_row=0;
  }
@@ -103,4 +107,3 @@ double IsingSystem::magnetisation(){
 IsingSystem::~IsingSystem() {
 	// TODO Auto-generated destructor stub
 }
-

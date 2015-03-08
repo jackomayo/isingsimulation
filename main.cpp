@@ -1,47 +1,60 @@
 #include<stdlib.h> 
 #include<stdio.h>
-#include<cmath>
+#include<math.h>
 #include <iostream>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
-#define ISINGSIZE 16
+#define ISINGSIZE 8
 
 
 int main (void)
+
 {
- IsingSystem MyArray;//Initialises 2D ising array
- 
+
+	printf("Are we cooking?\n..........................\n\n");
+
+setvbuf(stdout, NULL, _IONBF, 0);
+setvbuf(stderr, NULL, _IONBF, 0);
+
+//Initialises 2D ising array
+
+IsingSystem MyArray;
+
 //output file
  FILE *results;
- results=fopen("Simulation_Results_32x32","w");
+ results=fopen("Simulation_Results_8x8","w");
+ //Initialises the varible initial energy, final energy and change in energy
+ double Ei,Ef,Edif;
+ //Initialises perturbation condition
+ double r;
+ //Initialises temperature constant
+ double T;
  
- double Ei,Ef,Edif;//Initialises the varible initial energy, final energy and change in energy
- double r;//Initialises perturbation condition 
- double T;//Initialises temperature constant
- 
-/*Initialises counter vaiables; i is the thermalisation for loop counter, j is the simulation repetition counter, 
-and DataCounter counts the number of data points collected per simulation*/
+//Initialises counter vaiables; i is the thermalisation for loop counter, j is the simulation repetition counter,
+//and DataCounter counts the number of data points collected per simulation
  int i,j,DataCounter;
  
- int const Nc=1000000, jmax=100;//Initialises Monte Carlo Number of simulations Nc and the number of Monte Carlo repetitions jmax
+ //Initialises Monte Carlo Number of simulations Nc and the number of Monte Carlo repetitions jmax
+ int const Nc=1000000, jmax=100;
  
-/*Initialises magnetic variables, sum of magnetisation, sum of magnetisation squared, average magnetisation and average magnetisation squated*/
+//Initialises magnetic variables, sum of magnetisation, sum of magnetisation squared, average magnetisation and average magnetisation squated
  double MagSum, Mag2Sum,AvMag,Av2Mag;
  
-/*Initialises energetic variables, sum of energies, sum of energies squared, average energies and average energies squared*/
+//Initialises energetic variables, sum of energies, sum of energies squared, average energies and average energies squared
  double Eav,E2av,Esum,E2sum;
  
  double CvSum,Cv2Sum,CvAv,Cv2Av;//Initialises specific heat sum, specific heat squared sum, specific heat average and specific heat squared average 
  
- double Merr,Cverr;//Initialises magnetic specific heat error
+ //Initialises magnetic specific heat error
+ double Merr,Cverr;
  
- printf("Generating Data; Please wait...\n\n\n");
+ printf("Cooking data; Please wait...\n");
  
  
-/*Loops Monte Carlo simulation for required number of temperatures*/
+//Loops Monte Carlo simulation for required number of temperatures
 for(T=0.5;T<6;T+=0.02){
- 
-/*(Re)sets specific heat counter variables*/                        
+ printf("t= %lf \n", T);
+//(Re)sets specific heat counter variables
   CvSum=0;                     
   Cv2Sum=0;
                        
@@ -72,8 +85,8 @@ for(T=0.5;T<6;T+=0.02){
        if (r>exp(-1*(Edif/T))) MyArray.perturb();
     
     
-/*Data collection conditions given, data only collected from half of the Monte Carlo simulation, allowing the array to thermalise
-aswell as only collected for every nth loop, where n is the size of the array, to avoid correlations*/
+//Data collection conditions given, data only collected from half of the Monte Carlo simulation, allowing the array to thermalise
+//aswell as only collected for every nth loop, where n is the size of the array, to avoid correlations
        if(i>Nc/2 && i%(ISINGSIZE*ISINGSIZE)==0){
         MagSum+=MyArray.magnetisation();//Collects magnetisation data
         Mag2Sum+=pow(MyArray.magnetisation(),2);//Collects magnetisation squared data
@@ -115,6 +128,6 @@ aswell as only collected for every nth loop, where n is the size of the array, t
  fclose(results);
  
  printf("done!\n");   
- system("pause");
+
  return 0;    
 }
