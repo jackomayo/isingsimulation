@@ -11,16 +11,18 @@ int main (void)
 
 {
 
-	printf("Are we cooking?\n..........................\n\n");
+printf("Are we cooking?\n..........................\n\n");
 
 setvbuf(stdout, NULL, _IONBF, 0);
 setvbuf(stderr, NULL, _IONBF, 0);
 
 
-
 IsingSystem MyArray;
 
-//output file
+ IsingSystem MyArray;//Initialises 2D ising array
+// printf("are we cooking?");
+
+ //output file
  FILE *results;
  results=fopen("Simulation_Results_8x8","w");
  //Initialises the varible initial energy, final energy and change in energy
@@ -48,12 +50,18 @@ IsingSystem MyArray;
  //Initialises magnetic specific heat error
  double Merr,Cverr;
  
+
  printf("Cooking data; Please wait...\n");
+
+ printf("Cooking data; Please wait...\n\n\n");
  
  
 //Loops Monte Carlo simulation for required number of temperatures
 for(T=0.5;T<6;T+=0.02){
- printf("t= %lf \n", T);
+
+
+ printf("t= %lf \n ", T);
+
 //(Re)sets specific heat counter variables
   CvSum=0;                     
   Cv2Sum=0;
