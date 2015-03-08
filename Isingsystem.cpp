@@ -16,6 +16,8 @@
 
 // sets randomly selected particle to 0,0
 IsingSystem::IsingSystem(){
+
+//	necessaary to work on windows (not on linux tho)
 	up_row=0;
 	down_row=0;
 	right_column=0;
