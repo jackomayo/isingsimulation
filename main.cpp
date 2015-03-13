@@ -2,29 +2,27 @@
 #include<stdio.h>
 #include<math.h>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
 #define ISINGSIZE 8
-
+using namespace std;
 
 int main (void)
 
 {
 
-printf("Are we cooking?\n..........................\n\n");
+cout<<"Are we cooking?\n..........................\n\n"<< endl;
 
 setvbuf(stdout, NULL, _IONBF, 0);
 setvbuf(stderr, NULL, _IONBF, 0);
 
-
-IsingSystem MyArray;
-
  IsingSystem MyArray;//Initialises 2D ising array
-// printf("are we cooking?");
 
- //output file
- FILE *results;
- results=fopen("Simulation_Results_8x8","w");
+//File initialisation
+ ofstream myfile;
+ myfile.open ("8x8results.txt");
  //Initialises the varible initial energy, final energy and change in energy
  double Ei,Ef,Edif;
  //Initialises perturbation condition
@@ -53,14 +51,14 @@ IsingSystem MyArray;
 
  printf("Cooking data; Please wait...\n");
 
- printf("Cooking data; Please wait...\n\n\n");
  
- 
+
 //Loops Monte Carlo simulation for required number of temperatures
 for(T=0.5;T<6;T+=0.02){
 
+//debug print to make sure all works
+cout<<"t= "<<T<< endl;
 
- printf("t= %lf \n ", T);
 
 //(Re)sets specific heat counter variables
   CvSum=0;                     
@@ -156,18 +154,18 @@ for(T=0.5;T<6;T+=0.02){
    //Calculates magnetisation error
    Merr=sqrt((Av2Mag-pow(AvMag,2))/DataCounter);
   
-  
+//Output to file
 
-   //output to file
-  fprintf(results,"%lf %lf %lf %lf %lf\n",T,AvMag,Merr,CvAv,Cverr);
+myfile<< setprecision(10) << T <<" "<< AvMag <<" "<< Merr <<" "<< CvAv <<" "<< Cverr << endl;
   
 //reset array
   MyArray.reset();
  }
  
- fclose(results);
+
+myfile.close();
  
- printf("cooked!\n");
+std::cout<<"cooked!"<<std::endl;
 
  return 0;    
 }
