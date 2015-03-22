@@ -165,7 +165,7 @@ myfile<< setprecision(10) << T <<" "<< AvMag <<" "<< Merr <<" "<< CvAv <<" "<< C
 
 myfile.close();
  
-std::cout<<"cooked!"<<std::endl;
+cout<<"cooked!"<<endl;
 
  return 0;    
 }
