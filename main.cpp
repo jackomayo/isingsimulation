@@ -6,7 +6,7 @@
 #include <iomanip>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
-#define ISINGSIZE 8
+#define ISINGSIZE 64
 using namespace std;
 
 int main (void)
@@ -18,149 +18,152 @@ cout<<"Are we cooking?\n..........................\n\n"<< endl;
 setvbuf(stdout, NULL, _IONBF, 0);
 setvbuf(stderr, NULL, _IONBF, 0);
 
- IsingSystem MyArray;//Initialises 2D ising array
 
-//File initialisation
  ofstream myfile;
- myfile.open ("8x8results.txt");
- //Initialises the varible initial energy, final energy and change in energy
- double Ei,Ef,Edif;
- //Initialises perturbation condition
- double r;
- //Initialises temperature constant
- double T;
- 
-//Initialises counter vaiables; i is the thermalisation for loop counter, j is the simulation repetition counter,
-//and DataCounter counts the number of data points collected per simulation
- int i,j,DataCounter;
- 
- //Initialises Monte Carlo Number of simulations Nc and the number of Monte Carlo repetitions jmax
- int const Nc=1000000, jmax=100;
- 
-//Initialises magnetic variables, sum of magnetisation, sum of magnetisation squared, average magnetisation and average magnetisation squated
- double MagSum, Mag2Sum,AvMag,Av2Mag;
- 
-//Initialises energetic variables, sum of energies, sum of energies squared, average energies and average energies squared
- double Eav,E2av,Esum,E2sum;
- 
- double CvSum,Cv2Sum,CvAv,Cv2Av;//Initialises specific heat sum, specific heat squared sum, specific heat average and specific heat squared average 
- 
- //Initialises magnetic specific heat error
- double Merr,Cverr;
- 
+ myfile.open ("64x64simulationresultsmega.txt");
 
- printf("Cooking data; Please wait...\n");
 
+ //energy variables and perturbation condition
+
+double E_i,E_f,deltaE,r;
+float T;//for some reason wont work as a double
+
+IsingSystem Array;
  
+ int i,j,points;
+ int const Nmcs=5000000, rmax=300;
+ 
+ //variable init
+ double Ctot,Ctot2,CAvg,CAv2,E_av,E2av,Etot,Etot2,magtot, magtot2,mag_av,mag_av2, Merr,Cerr;
+ 
+ cout<<"Cooking data:"<<endl;
 
-//Loops Monte Carlo simulation for required number of temperatures
-for(T=0.5;T<6;T+=0.02){
+for(T=0.5;T<6;T+=0.01){
 
 //debug print to make sure all works
-cout<<"t= "<<T<< endl;
+//cout<<"t= "<<T<< endl;
 
-
-//(Re)sets specific heat counter variables
-  CvSum=0;                     
-  Cv2Sum=0;
+  Ctot=0;
+  Ctot2=0;
                        
-   for(j=0;j<jmax;j++){
+   for(j=0;j<rmax;j++){
                        
-/*(Re)sets magnetic and energetic counter variables*/             
-     MagSum=0; 
-     Mag2Sum=0;
-     Esum=0;
-     E2sum=0; 
-     DataCounter=0;
-   
-   
-//actual simulation
-     for(i=0;i<Nc;i++){
-       // select particle
-       MyArray.choose();
-       //sets initial energy
-       Ei=MyArray.localEnergy();
+//declare energy and megnetisation set for individial configurations
+     magtot=0;
+     magtot2=0;
+     Etot=0;
+     Etot2=0; 
+     points=0;
 
-       //Changes spin of selected particle
-       MyArray.perturb();
+     for(i=0;i<Nmcs;i++){
+       //particle choose
+       Array.choose();
 
-       //Takes energy of selected particle and sets it to final energy
-       Ef=MyArray.localEnergy();
 
-       //Finds difference of final and initial energy
-       Edif=Ef-Ei;
+       E_i=Array.localEnergy();
+
+       //change spin
+       Array.perturb();
+
+       //sets energy
+       E_f=Array.localEnergy();
+
+       deltaE=E_f-E_i;
      
-       //Generates a random number between 0 and 1 and sets it to perturbation condition
+       //random number for pet cond.
        r=((double) rand()/RAND_MAX);
       
-       //Compares perturbation condition to exp(-Edif/T), if perturbation condition is larger the selected particle's spin is changed back
-       if (r>exp(-1*(Edif/T))) MyArray.perturb();
+       //Perturbation condition
+       if (r>exp(-1*(deltaE/T))) Array.perturb();
     
     
-       //Data collection conditions given, data only collected from half of the Monte Carlo simulation, allowing the array to thermalise
-       //aswell as only collected for every nth loop, where n is the size of the array, to avoid correlations
-       if(i>Nc/2 && i%(ISINGSIZE*ISINGSIZE)==0){
+       //point conditions to prevent multiple configurations and for thermalisation to occur
 
-    	//Collects magnetisation data
-        MagSum+=MyArray.magnetisation();
+       if(i>Nmcs/2 && i%(ISINGSIZE*ISINGSIZE)==0){
 
-        //Collects magnetisation squared data
-        Mag2Sum+=pow(MyArray.magnetisation(),2);
+    	// magnetisation
+        magtot+=Array.magnetisation();
 
-        //Collects energy data
-        Esum+=MyArray.totalEnergy();
+        // magnetisation squared
+        magtot2+=pow(Array.magnetisation(),2);
 
-        //Collects energy squared data
-        E2sum+=pow(MyArray.totalEnergy(),2);
+        // energy data
+        Etot+=Array.totalEnergy();
 
-        //Counts amount of data collected
-               }
-        DataCounter++;
+        // energy squared
+        Etot2+=pow(Array.totalEnergy(),2);
+
+
+
+
+
+        //data points increment
+         points++;      }
+
 
 
      }
-   
-
-     //Calculates average magnetisation
-     AvMag=MagSum/DataCounter;
 
 
-     //Calculates average magnetisation squared
-    Av2Mag=Mag2Sum/DataCounter;
+     // average magnetisation
+     mag_av=magtot/points;
+
+
+     // average magnetisation squared
+    mag_av2=magtot2/points;
   
-    //Calculates average energy
-    Eav=Esum/DataCounter;
+    // average energy
+    E_av=Etot/points;
 
-    //Calculates average energy squared
-    E2av=E2sum/DataCounter;
- 
-    //Collects specific heat
-    CvSum+=(E2av-pow(Eav,2))/(pow(T,2)*pow(ISINGSIZE,2));
+    // average energy squared
+    E2av=Etot2/points;
 
-    //Collects specific heat squared
-    Cv2Sum+=pow((E2av-pow(Eav,2))/(pow(T,2)*pow(ISINGSIZE,2)),2);
+    // specific heat
+       Ctot=Ctot+((E2av-(E_av*E_av))/((T*T)*(ISINGSIZE*ISINGSIZE)));
 
-  }
-  
+       //Collects specific heat squared
+       Ctot2=Ctot2+(pow((E2av-(E_av*E_av))/((T*T)*(ISINGSIZE*ISINGSIZE)),2));
+
+
+   }
+
    //Calculates the average specific heat
-   CvAv=CvSum/jmax;
+   CAvg=Ctot/rmax;
   
    //Calculates the average specific heat squared
-   Cv2Av=Cv2Sum/jmax;
+   CAv2=Ctot2/rmax;
   
-   //Calculates specific heat error
-   Cverr=sqrt((Cv2Av-pow(CvAv,2))/jmax);
+   //specific heat error
+   Cerr=sqrt((CAv2-pow(CAvg,2))/rmax);
   
-   //Calculates magnetisation error
-   Merr=sqrt((Av2Mag-pow(AvMag,2))/DataCounter);
-  
-//Output to file
+   //magnetisation error
+   Merr=sqrt((mag_av2-pow(mag_av,2))/points);
 
-myfile<< setprecision(10) << T <<" "<< AvMag <<" "<< Merr <<" "<< CvAv <<" "<< Cverr << endl;
+
   
+
+myfile<< setprecision(7) << T <<" "<< mag_av <<" "<< Merr <<" "<< CAvg <<" "<< Cerr << endl;
+
+
+
+cout<< T <<" "<< mag_av <<" "<< Merr <<" "<< CAvg <<" "<< Cerr << endl;
+
+
+//printout asci representations below and above curie temp
+
+if((T<=1.51 && T>=1.49) || (T<=5.01 && T>=4.99)){
+	cout<<T<<endl;
+	Array.print();
+	cout<<endl;
+}
+
+
 //reset array
-  MyArray.reset();
+  Array.reset();
+
  }
+
+
  
 
 myfile.close();

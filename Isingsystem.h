@@ -7,16 +7,16 @@
 #ifndef ISINGSYSTEM_H_
 #define ISINGSYSTEM_H_
 #include "Isingparticle.h"
-#define ISINGSIZE 8 // size of the array
+#define ISINGSIZE 64 // size of the array
 class IsingSystem{
  private:
   IsingParticle particles[ISINGSIZE][ISINGSIZE];//Initialises an array of ising particles (all of spin +1) of a give size
   int current_column;//random selection
   int current_row;//random selection
-  int left_column;
-  int right_column;
-  int up_row;//increment for neighbour
-  int down_row;//increment for neighbour
+  int left;
+  int right;
+  int up;//increment for neighbour
+  int down;//increment for neighbour
   void find_neighbours();
  public:
   ~IsingSystem();
