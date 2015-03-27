@@ -1,0 +1,7 @@
+
+Set ylabel "Normalised Magnetisation (A/m)"
+set xlabel "Temperature"
+
+plot 'C:\Users\Jack Mayo\git\isingsimulation\8x8results.txt' with points pointtype 7 using 1:2:3 with yerrorbars title "8x8" , 
+'C:\Users\Jack Mayo\git\isingsimulation\16x16results.txt' with points pointtype 7 using 1:2:3 with yerrorbars title "16x16" , 
+'C:\Users\Jack Mayo\git\isingsimulation\32x32results.txt' with points pointtype 7 using 1:2:3 with yerrorbars title "32x32"

@@ -6,6 +6,7 @@
 #include <iomanip>
 #include "Isingsystem.h"
 #include "Isingparticle.h"
+#include "Statistics.h"
 #define ISINGSIZE 64
 using namespace std;
 
@@ -28,45 +29,44 @@ setvbuf(stderr, NULL, _IONBF, 0);
 double E_i,E_f,deltaE,r;
 float T;//for some reason wont work as a double
 
-IsingSystem Array;
+IsingSystem lattice;
  
- int i,j,points;
- int const Nmcs=5000000, rmax=300;
+ int i,j;
+ int const Nmcs=100000, rmax=100;
  
  //variable init
- double Ctot,Ctot2,CAvg,CAv2,E_av,E2av,Etot,Etot2,magtot, magtot2,mag_av,mag_av2, Merr,Cerr;
+ double mag_av, Merr,Cerr,Cv;
  
  cout<<"Cooking data:"<<endl;
 
-for(T=0.5;T<6;T+=0.01){
+for(T=0.5;T<6;T+=0.02){
 
 //debug print to make sure all works
 //cout<<"t= "<<T<< endl;
 
-  Ctot=0;
-  Ctot2=0;
-                       
+
+  Statistics specheat;
+  Statistics magnet;
+  Statistics specheaterror;
+
    for(j=0;j<rmax;j++){
                        
 //declare energy and megnetisation set for individial configurations
-     magtot=0;
-     magtot2=0;
-     Etot=0;
-     Etot2=0; 
-     points=0;
+
+
 
      for(i=0;i<Nmcs;i++){
        //particle choose
-       Array.choose();
+       lattice.choose();
 
 
-       E_i=Array.localEnergy();
+       E_i=lattice.localEnergy();
 
        //change spin
-       Array.perturb();
+       lattice.perturb();
 
        //sets energy
-       E_f=Array.localEnergy();
+       E_f=lattice.localEnergy();
 
        deltaE=E_f-E_i;
      
@@ -74,92 +74,69 @@ for(T=0.5;T<6;T+=0.01){
        r=((double) rand()/RAND_MAX);
       
        //Perturbation condition
-       if (r>exp(-1*(deltaE/T))) Array.perturb();
+       if (r>exp(-1*(deltaE/T))) lattice.perturb();
     
     
        //point conditions to prevent multiple configurations and for thermalisation to occur
 
        if(i>Nmcs/2 && i%(ISINGSIZE*ISINGSIZE)==0){
 
-    	// magnetisation
-        magtot+=Array.magnetisation();
-
-        // magnetisation squared
-        magtot2+=pow(Array.magnetisation(),2);
-
-        // energy data
-        Etot+=Array.totalEnergy();
-
-        // energy squared
-        Etot2+=pow(Array.totalEnergy(),2);
 
 
+    	   magnet.add(lattice.magnetisation());
+
+    	   specheat.add(lattice.totalEnergy());
 
 
-
-        //data points increment
-         points++;      }
+    	   }
 
 
 
      }
 
 
-     // average magnetisation
-     mag_av=magtot/points;
 
 
-     // average magnetisation squared
-    mag_av2=magtot2/points;
-  
-    // average energy
-    E_av=Etot/points;
+      Cv =(1/((T*T)*(ISINGSIZE*ISINGSIZE))) *( (specheat.getSqAverage() - specheat.getAverage()*specheat.getAverage()));
 
-    // average energy squared
-    E2av=Etot2/points;
 
-    // specific heat
-       Ctot=Ctot+((E2av-(E_av*E_av))/((T*T)*(ISINGSIZE*ISINGSIZE)));
+       specheaterror.add(Cv);
 
-       //Collects specific heat squared
-       Ctot2=Ctot2+(pow((E2av-(E_av*E_av))/((T*T)*(ISINGSIZE*ISINGSIZE)),2));
 
 
    }
 
-   //Calculates the average specific heat
-   CAvg=Ctot/rmax;
-  
-   //Calculates the average specific heat squared
-   CAv2=Ctot2/rmax;
-  
-   //specific heat error
-   Cerr=sqrt((CAv2-pow(CAvg,2))/rmax);
-  
-   //magnetisation error
-   Merr=sqrt((mag_av2-pow(mag_av,2))/points);
 
+  
+     //Magnetisation
+     mag_av=magnet.getAverage();
+     //specific heat error
+     Cerr=(1/sqrt(specheaterror.getNumber()))*sqrt(specheaterror.getSqAverage() - (specheaterror.getAverage()*specheaterror.getAverage()));
+
+
+     //magnetisation error
+	 Merr=(1/sqrt(magnet.getNumber()))*sqrt(magnet.getSqAverage() - (magnet.getAverage()*magnet.getAverage()));
 
   
 
-myfile<< setprecision(7) << T <<" "<< mag_av <<" "<< Merr <<" "<< CAvg <<" "<< Cerr << endl;
+myfile<< setprecision(7) << T <<" "<< mag_av <<" "<< Merr <<" "<< Cv <<" "<< Cerr << endl;
 
 
 
-cout<< T <<" "<< mag_av <<" "<< Merr <<" "<< CAvg <<" "<< Cerr << endl;
+cout<< T <<" "<< mag_av <<" "<< Merr <<" "<< Cv <<" "<< Cerr << endl;
 
 
 //printout asci representations below and above curie temp
 
-if((T<=1.51 && T>=1.49) || (T<=5.01 && T>=4.99)){
+if((T<=1.501 && T>=1.499) || (T<=5.001 && T>=4.999)){
 	cout<<T<<endl;
-	Array.print();
+	lattice.print();
 	cout<<endl;
 }
 
 
 //reset array
-  Array.reset();
+  lattice.reset();
 
  }
 
