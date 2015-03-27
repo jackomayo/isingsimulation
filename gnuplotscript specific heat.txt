@@ -13,3 +13,9 @@ set xlabel "Temperature"
 plot 'C:\Users\Jack Mayo\git\isingsimulation\8x8results.txt' using 1:2:3 with yerrorbars title "8x8" pt 7 ps 0.3,\
 'C:\Users\Jack Mayo\git\isingsimulation\16x16results.txt' using 1:2:3 with yerrorbars title "16x16" pt 7 ps 0.3, \
 'C:\Users\Jack Mayo\git\isingsimulation\32x32results.txt' using 1:2:3 with yerrorbars title "32x32" pt 7 ps 0.3
+
+set ylabel "Normalised Magnetisation (A/m)"
+set y2label "Normalised Magnetisation (A/m)"
+set xlabel "Temperature"
+
+plot 'C:\Users\Jack Mayo\git\isingsimulation\64x64resultsmega.txt' using 1:2:3 with yerrorbars title "8x8" pt 7 ps 0.3,\

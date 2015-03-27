@@ -27,12 +27,12 @@ setvbuf(stderr, NULL, _IONBF, 0);
  //energy variables and perturbation condition
 
 double E_i,E_f,deltaE,r;
-float T;//for some reason wont work as a double
+double T;//for some reason wont work as a double
 
 IsingSystem lattice;
  
  int i,j;
- int const Nmcs=100000, rmax=100;
+ int const Nmcs=350000, rmax=200;
  
  //variable init
  double mag_av, Merr,Cerr,Cv;
@@ -111,11 +111,11 @@ for(T=0.5;T<6;T+=0.02){
      //Magnetisation
      mag_av=magnet.getAverage();
      //specific heat error
-     Cerr=(1/sqrt(specheaterror.getNumber()))*sqrt(specheaterror.getSqAverage() - (specheaterror.getAverage()*specheaterror.getAverage()));
+     Cerr=(1/sqrt(specheaterror.getNumber()))*sqrt(specheaterror.getSqAverage() - pow(specheaterror.getAverage(),2));
 
 
      //magnetisation error
-	 Merr=(1/sqrt(magnet.getNumber()))*sqrt(magnet.getSqAverage() - (magnet.getAverage()*magnet.getAverage()));
+	 Merr=(1/sqrt(magnet.getNumber()))*sqrt(magnet.getSqAverage() - pow(magnet.getAverage(),2));
 
   
 
